@@ -1,0 +1,9 @@
+{
+  "title": "Gaussian Splats",
+  "description": "View 3D Gaussian splat PLY files from this Trimble Connect project",
+  "url": "https://REPLACE_WITH_HOST/",
+  "icon": "https://REPLACE_WITH_HOST/icon.svg",
+  "infoUrl": "https://REPLACE_WITH_HOST/",
+  "extensionType": ["project"],
+  "enabled": true
+}

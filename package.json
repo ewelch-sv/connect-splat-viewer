@@ -1,0 +1,23 @@
+{
+  "name": "connect-splat-viewer",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Trimble Connect project extension for viewing Gaussian splat PLY files",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sparkjsdev/spark": "^2.1.0",
+    "three": "^0.180.0",
+    "trimble-connect-workspace-api": "^0.3.34"
+  },
+  "devDependencies": {
+    "@types/three": "^0.180.0",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0"
+  }
+}
