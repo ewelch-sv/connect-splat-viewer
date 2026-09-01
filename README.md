@@ -15,23 +15,50 @@ Open http://localhost:5173. Use **Open local PLY** with a 3DGS `.ply`, or **Load
 
 A mesh or point-cloud `.ply` (for example a SiteVision / MeshLab export) will be rejected. Gaussian splat PLYs include properties such as `scale_0`, `rot_0`, `f_dc_0`, and `opacity`.
 
+## Publish
+
+The app must be on **HTTPS** so Trimble Connect can fetch the manifest (CORS is required). Local `npm run preview` already sends `Access-Control-Allow-Origin: *`.
+
+### GitHub Pages (recommended)
+
+GitHub CLI is enough after you sign in once:
+
+```bash
+gh auth login
+gh repo create connect-splat-viewer --public --source=. --remote=origin --push
+gh api -X POST "repos/$(gh repo view --json nameWithOwner -q .nameWithOwner)/pages" -f build_type=workflow
+```
+
+The included workflow builds with `VITE_PUBLIC_BASE_URL` set to `https://<user>.github.io/connect-splat-viewer`. After the **Deploy GitHub Pages** action succeeds, the manifest URL is:
+
+`https://<user>.github.io/connect-splat-viewer/manifest.json`
+
+If downloads fail on Pages (static host, no proxy), use Netlify instead so `/download-proxy` is available.
+
+### Netlify
+
+Connect this repo to Netlify (or `npx netlify deploy --prod`). `netlify.toml` publishes `dist`, adds CORS headers, and maps `/download-proxy` to the download function.
+
+### Manual build
+
+```bash
+set VITE_PUBLIC_BASE_URL=https://your-host.example
+npm run build
+```
+
+Confirm `dist/manifest.json` has absolute `url` and `icon` values for that host.
+
 ## Install in Trimble Connect
 
-1. Host this app on HTTPS with CORS enabled on the manifest (GitHub Pages, Netlify, or `npm run build` behind any static host).
-2. Confirm `dist/manifest.json` (or `/manifest.json`) has absolute `url` and `icon` values for that host. GitHub Actions sets `VITE_PUBLIC_BASE_URL` automatically. For a manual build:
+Use a **test project**. You must be a project admin.
 
-   ```bash
-   set VITE_PUBLIC_BASE_URL=https://your-host.example
-   npm run build
-   ```
+1. Open the project in Trimble Connect for Browser.
+2. Go to **Settings → Apps & Capabilities → + Add Custom**.
+3. Paste the manifest URL, for example `https://<user>.github.io/connect-splat-viewer/manifest.json`.
+4. Enable the extension. It appears in the **left navigation** as **Gaussian Splats**.
+5. Open it and accept the access-token prompt so the extension can list and download project files.
 
-3. As a **project admin**, open the project in Trimble Connect for Browser.
-4. Go to **Settings → Apps & Capabilities → + Add Custom**.
-5. Paste the manifest URL, for example `https://your-host.example/manifest.json`.
-6. Enable the extension. It appears in the **left navigation** as **Gaussian Splats**.
-7. Open it and accept the access-token prompt so the extension can list and download project files.
-
-Install this on a **test project** first. The extension is read-only (list + download). After consent it holds the signed-in user’s Trimble Identity token in the page — do not host the app on an untrusted origin.
+The extension is read-only (list + download). After consent it holds the signed-in user’s Trimble Identity token in the page — do not host the app on an untrusted origin.
 
 Browser project extensions and 3D Viewer extensions are independent. This v1 is `extensionType: ["project"]` only.
 
